@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Smart Study Planner - personalized exam revision timetable and progress tracker.">
+  <title>Smart Study Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">SP</div>
+        <div>
+          <h1>StudyPlanner</h1>
+          <span>Smart Revision</span>
+        </div>
+      </div>
+      <nav>
+        <button class="nav-item active" data-section="dashboard"><span>⌂</span> Dashboard</button>
+        <button class="nav-item" data-section="subjects"><span>▣</span> Subjects</button>
+        <button class="nav-item" data-section="planner"><span>◫</span> Smart Planner</button>
+        <button class="nav-item" data-section="progress"><span>✓</span> Progress</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <button id="demoBtn" class="secondary-btn">Load Demo Data</button>
+        <button id="resetBtn" class="danger-text">Reset all data</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow" id="greeting">WELCOME BACK</p>
+          <h2 id="pageTitle">Your Study Dashboard</h2>
+        </div>
+        <button class="primary-btn" id="addSubjectTop">+ Add Subject</button>
+      </header>
+
+      <div id="alertBox" class="alert hidden"></div>
+
+      <section id="dashboard" class="section active">
+        <div class="hero-card">
+          <div>
+            <span class="hero-label">SMART REVISION PLANNER</span>
+            <h3>Prepare smarter.<br><span>Study with a plan.</span></h3>
+            <p>Generate a personalized timetable based on exam deadlines, subject difficulty and your available study hours.</p>
+            <button class="light-btn" data-go="planner">Generate / Update Plan →</button>
+          </div>
+          <div class="hero-graphic">
+            <div class="calendar-card">
+              <div class="calendar-top"><span>OCT</span><strong id="heroDay">03</strong></div>
+              <div class="mini-check">✓ Revision completed</div>
+              <div class="mini-line"></div>
+              <div class="mini-check">○ DBMS – 1.5 hrs</div>
+              <div class="mini-check">○ Python – 1 hr</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card"><span>Subjects</span><strong id="statSubjects">0</strong><small>in your plan</small></div>
+          <div class="stat-card"><span>Upcoming Exams</span><strong id="statExams">0</strong><small>scheduled</small></div>
+          <div class="stat-card"><span>Study Hours</span><strong id="statHours">0h</strong><small>planned</small></div>
+          <div class="stat-card"><span>Completion</span><strong id="statCompletion">0%</strong><small>tasks completed</small></div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="panel">
+            <div class="panel-head"><div><h3>Today's Plan</h3><p id="todayDate"></p></div><button class="text-btn" data-go="planner">View all</button></div>
+            <div id="todayTasks" class="task-list"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div><h3>Exam Countdown</h3><p>Your next deadlines</p></div></div>
+            <div id="countdownList" class="countdown-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="subjects" class="section">
+        <div class="section-intro">
+          <div><span class="eyebrow">INPUT</span><h3>Your Subjects</h3><p>Add every subject you want the planner to schedule.</p></div>
+          <button class="primary-btn" id="addSubjectBtn">+ Add Subject</button>
+        </div>
+        <div id="subjectCards" class="subject-grid"></div>
+        <div id="emptySubjects" class="empty-state">
+          <div class="empty-icon">＋</div>
+          <h3>No subjects yet</h3>
+          <p>Add your subjects, exam dates and difficulty to generate a personalized plan.</p>
+          <button class="primary-btn" id="emptyAdd">Add your first subject</button>
+        </div>
+      </section>
+
+      <section id="planner" class="section">
+        <div class="section-intro">
+          <div><span class="eyebrow">AUTOMATION</span><h3>Smart Revision Plan</h3><p>The algorithm prioritizes closer exams and harder subjects.</p></div>
+          <button class="primary-btn" id="generateBtn">Generate Plan</button>
+        </div>
+        <div class="planner-summary">
+          <div><span>Daily capacity</span><strong id="dailyCapacity">0h</strong></div>
+          <div><span>Planned sessions</span><strong id="plannedSessions">0</strong></div>
+          <div><span>Plan ends</span><strong id="planEnd">—</strong></div>
+        </div>
+        <div id="planDays" class="plan-days"></div>
+        <div id="emptyPlan" class="empty-state">
+          <div class="empty-icon">◫</div>
+          <h3>Generate your study plan</h3>
+          <p>Add at least one subject and click Generate Plan.</p>
+        </div>
+      </section>
+
+      <section id="progress" class="section">
+        <div class="section-intro">
+          <div><span class="eyebrow">TRACKING</span><h3>Progress Analytics</h3><p>See how consistently you are completing your revision tasks.</p></div>
+        </div>
+        <div class="progress-grid">
+          <div class="panel chart-panel"><div class="panel-head"><div><h3>Subject Progress</h3><p>Completed vs remaining sessions</p></div></div><canvas id="subjectChart"></canvas></div>
+          <div class="panel chart-panel"><div class="panel-head"><div><h3>Overall Completion</h3><p>Your current study progress</p></div></div><canvas id="overallChart"></canvas></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div><h3>Subject Breakdown</h3><p>Progress by subject</p></div></div>
+          <div id="progressRows"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="subjectModal" class="modal-backdrop hidden">
+    <div class="modal">
+      <div class="modal-head"><div><h3 id="modalTitle">Add Subject</h3><p>Give the planner enough information to schedule revision.</p></div><button class="close-btn" id="closeModal">×</button></div>
+      <form id="subjectForm">
+        <input type="hidden" id="subjectId">
+        <label>Subject name<input id="subjectName" required maxlength="60" placeholder="e.g. Database Management Systems"></label>
+        <div class="form-row">
+          <label>Exam date<input type="date" id="examDate" required></label>
+          <label>Difficulty
+            <select id="difficulty"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+          </label>
+        </div>
+        <label>Target revision hours
+          <input type="number" id="targetHours" min="1" max="100" step="0.5" value="5" required>
+          <small>Total hours you want to spend revising this subject.</small>
+        </label>
+        <div class="modal-actions"><button type="button" class="secondary-btn" id="cancelModal">Cancel</button><button class="primary-btn" type="submit">Save Subject</button></div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="mobile-footer">
+    <button data-section="dashboard" class="active">⌂<span>Home</span></button>
+    <button data-section="subjects">▣<span>Subjects</span></button>
+    <button data-section="planner">◫<span>Planner</span></button>
+    <button data-section="progress">✓<span>Progress</span></button>
+  </footer>
+  <script src="app.js"></script>
+</body>
+</html>
